@@ -1,21 +1,7 @@
 # CarbonX
 
 Carbon accounting, **peer emission benchmarking with uncertainty**, and a **simulated** carbon-credit
-marketplace. This version restructures the project around the student research workflow in
-`docs/student_workflow.jpg` and `docs/Carbon_Project_Student_Description.pdf`.
-
-## What changed in this version
-
-| Area | Before | Now |
-|---|---|---|
-| Expected emissions | none (manual baseline number) | CatBoost peer benchmark + calibrated 90% interval (`benchmark.py`, `/benchmark`) |
-| Credits | presented as real | labelled **simulated**; never derived from the peer benchmark |
-| Research evidence | separate zip | `research/` (code, data, results) and `/benchmark/model` (metrics, coverage, 0/10/20% simulation) |
-| Grid factor | CEA v22.0 (separate repo) | merged: `import_cea.py`, `migrate_carbonx.py`, `import_cea_credits.py` live here |
-
-The central finding of the research drives the design: with **no real reduction**, the point benchmark
-still produced a positive "credit" for 45.6% of properties (7.3% with the lower bound). A peer gap is not
-evidence of a reduction, so the benchmark informs review and never mints credits.
+marketplace.
 
 ## Run
 
