@@ -1,0 +1,48 @@
+{
+  "dataset": "UCI Steel Industry Energy Consumption DOI:10.24432/C52G8C",
+  "splits": {
+    "train": {
+      "first": "2018-01-01",
+      "last": "2018-07-19",
+      "rows": 19200,
+      "days": 200
+    },
+    "validation": {
+      "first": "2018-07-20",
+      "last": "2018-09-12",
+      "rows": 5280,
+      "days": 55
+    },
+    "calibration": {
+      "first": "2018-09-13",
+      "last": "2018-11-06",
+      "rows": 5280,
+      "days": 55
+    },
+    "test": {
+      "first": "2018-11-07",
+      "last": "2018-12-31",
+      "rows": 5280,
+      "days": 55
+    }
+  },
+  "selected_catboost": {
+    "depth": 4,
+    "iterations": 800,
+    "validation_MAE": 12.7038558318225
+  },
+  "emission_factor_kgCO2e_per_kWh": 0.5,
+  "factor_status": "User-supplied assumption; must document authoritative regional/year factor for real accounting",
+  "excluded_columns": [
+    "CO2(tCO2)",
+    "Load_Type",
+    "reactive power",
+    "power factors"
+  ],
+  "scope": "Calendar-conditioned electricity baseline. No measured production or intervention labels.",
+  "versions": {
+    "python": "3.12.14",
+    "sklearn": "1.8.0",
+    "catboost": "1.2.10"
+  }
+}

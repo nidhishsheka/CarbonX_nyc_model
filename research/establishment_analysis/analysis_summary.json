@@ -1,0 +1,9 @@
+{
+  "test_properties": 1828,
+  "above_point_benchmark": 994,
+  "above_interval": 91,
+  "within_interval": 1603,
+  "below_interval": 134,
+  "zero_reduction_point_false_credit_percent": 45.62363238512035,
+  "zero_reduction_conservative_false_credit_percent": 7.3304157549234095
+}

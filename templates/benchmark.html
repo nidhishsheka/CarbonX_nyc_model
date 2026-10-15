@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Peer Benchmark | CarbonX{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+    <h1>Peer Emission Benchmark</h1>
+    <p>Expected annual emissions of a building-type property, with a nominal 90% prediction interval.</p>
+</div>
+
+{% if message %}
+<div class="notice danger">{{ message }}</div>
+{% endif %}
+
+{% if result %}
+<div class="data-card">
+    <div class="card-header">
+        <div>
+            <h2>Result</h2>
+            <p>Model {{ result.model_version }}</p>
+        </div>
+        {% if result.comparison %}
+        <span class="status-badge {{ 'above' if 'Above' in result.comparison else 'below' if 'Below' in result.comparison else 'within' }}">
+            {{ result.comparison }}
+        </span>
+        {% endif %}
+    </div>
+
+    <div class="result-grid">
+        <div><span>Peer benchmark (expected)</span><strong>{{ "{:,.1f}".format(result.expected_tco2e) }} tCO₂e</strong></div>
+        <div><span>Lower bound (nominal 90%)</span><strong>{{ "{:,.1f}".format(result.lower_tco2e) }} tCO₂e</strong></div>
+        <div><span>Upper bound (nominal 90%)</span><strong>{{ "{:,.1f}".format(result.upper_tco2e) }} tCO₂e</strong></div>
+        {% if result.reported_tco2e is not none %}
+        <div><span>Reported emissions{% if actual_tco2e is not none %} (recorded in CarbonX){% endif %}</span>
+            <strong>{{ "{:,.1f}".format(result.reported_tco2e) }} tCO₂e</strong></div>
+        <div><span>Benchmark minus reported</span><strong>{{ "{:+,.1f}".format(result.gap_tco2e) }} tCO₂e</strong></div>
+        {% endif %}
+    </div>
+
+    {% set top = ([result.upper_tco2e, result.reported_tco2e or 0]|max) * 1.15 %}
+    <div class="interval-track">
+        <div class="interval-band" style="left: {{ result.lower_tco2e / top * 100 }}%; width: {{ (result.upper_tco2e - result.lower_tco2e) / top * 100 }}%;"></div>
+        <div class="interval-mark" style="left: {{ result.expected_tco2e / top * 100 }}%;" title="benchmark"></div>
+        {% if result.reported_tco2e is not none %}
+        <div class="interval-mark reported" style="left: {{ result.reported_tco2e / top * 100 }}%;" title="reported"></div>
+        {% endif %}
+    </div>
+    <div class="interval-labels"><span>0</span><span>green band = interval, black = benchmark{% if result.reported_tco2e is not none %}, red = reported{% endif %}</span><span>{{ "{:,.0f}".format(top) }} tCO₂e</span></div>
+
+    {% if result.review_action %}
+    <p><strong>Suggested follow-up:</strong> {{ result.review_action }}.
+       This is an exploratory flag, not a finding of excess emissions or of a reduction.</p>
+    {% endif %}
+    {% if result.imputed_fields %}
+    <p class="hint">Blank inputs were filled with training-set medians: {{ result.imputed_fields|join(", ") }}.
+       Enter 0 for a floor-area field if the property has no second or third use.</p>
+    {% endif %}
+    <p class="hint">No carbon credits were created or changed by this calculation.</p>
+</div>
+{% endif %}
+
+<div class="form-card">
+    <form method="POST">
+        <div class="form-section">
+            <h2>Establishment (optional)</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="est_id">Save result for</label>
+                    <select id="est_id" name="est_id">
+                        <option value="">Do not save</option>
+                        {% for e in establishments %}
+                        <option value="{{ e.est_id }}" {{ 'selected' if form.get('est_id')|string == e.est_id|string }}>{{ e.est_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="period">Reporting year</label>
+                    <input type="text" id="period" name="period" inputmode="numeric" maxlength="4"
+                           placeholder="e.g. 2026" value="{{ form.get('period', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="reported_tco2e">Reported emissions (tCO₂e)</label>
+                    <input type="number" id="reported_tco2e" name="reported_tco2e" min="0" step="any"
+                           value="{{ form.get('reported_tco2e', '') }}">
+                    <p class="hint">Leave blank to use emissions already recorded in CarbonX for that year.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <h2>Model inputs</h2>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="primary_property_type_self">Property type</label>
+                    <select id="primary_property_type_self" name="primary_property_type_self" required>
+                        <option value="" disabled {{ 'selected' if not form.get('primary_property_type_self') }}>Select</option>
+                        {% for t in property_types %}
+                        <option value="{{ t }}" {{ 'selected' if form.get('primary_property_type_self') == t }}>{{ t }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="borough">Borough</label>
+                    <select id="borough" name="borough">
+                        <option value="">Unknown</option>
+                        {% for b in boroughs %}
+                        <option value="{{ b }}" {{ 'selected' if form.get('borough') == b }}>{{ b }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="largest_property_use_type_1">Largest-use floor area (sq ft)</label>
+                    <input type="number" id="largest_property_use_type_1" name="largest_property_use_type_1"
+                           min="1" step="any" required value="{{ form.get('largest_property_use_type_1', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="_2nd_largest_property_use_1">2nd-largest-use floor area (sq ft)</label>
+                    <input type="number" id="_2nd_largest_property_use_1" name="_2nd_largest_property_use_1"
+                           min="0" step="any" value="{{ form.get('_2nd_largest_property_use_1', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="_3rd_largest_property_use_1">3rd-largest-use floor area (sq ft)</label>
+                    <input type="number" id="_3rd_largest_property_use_1" name="_3rd_largest_property_use_1"
+                           min="0" step="any" value="{{ form.get('_3rd_largest_property_use_1', '') }}">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="year_built">Year built</label>
+                    <input type="number" id="year_built" name="year_built" min="1600" step="1"
+                           value="{{ form.get('year_built', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="number_of_buildings">Number of buildings</label>
+                    <input type="number" id="number_of_buildings" name="number_of_buildings" min="1" step="1"
+                           value="{{ form.get('number_of_buildings', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="occupancy">Occupancy (%)</label>
+                    <input type="number" id="occupancy" name="occupancy" min="0" max="100" step="any"
+                           value="{{ form.get('occupancy', '') }}">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <a href="/benchmark/model" class="secondary-button">Model details</a>
+            <button type="submit">Calculate benchmark</button>
+        </div>
+    </form>
+</div>
+
+{% if history %}
+<div class="data-card">
+    <div class="card-header"><div><h2>Saved benchmarks for this establishment</h2></div></div>
+    <div class="table-container">
+        <table>
+            <thead><tr><th>Saved</th><th>Year</th><th>Benchmark</th><th>Interval</th><th>Reported</th><th>Comparison</th></tr></thead>
+            <tbody>
+            {% for h in history %}
+                <tr>
+                    <td>{{ h.created_at }}</td>
+                    <td>{{ h.period or "-" }}</td>
+                    <td>{{ "{:,.1f}".format(h.expected_tco2e) }}</td>
+                    <td>{{ "{:,.1f}".format(h.lower_tco2e) }} &ndash; {{ "{:,.1f}".format(h.upper_tco2e) }}</td>
+                    <td>{{ "{:,.1f}".format(h.reported_tco2e) if h.reported_tco2e is not none else "-" }}</td>
+                    <td>{{ h.comparison or "-" }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

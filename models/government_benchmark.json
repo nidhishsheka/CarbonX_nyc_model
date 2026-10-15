@@ -1,0 +1,146 @@
+{
+  "version": "nyc-ll84-2024-catboost-v1",
+  "name": "NYC LL84 peer emissions benchmark (CatBoost)",
+  "source": "City of New York NYC Open Data dataset 5zyy-y8am",
+  "report_year": 2024,
+  "model_file": "government_catboost.cbm",
+  "model_sha256": "e261f8fa5efe107ad85f0f8dfc6be80cc6018cd007d1f750907c29c72840fcd5",
+  "features": [
+    "largest_property_use_type_1",
+    "_2nd_largest_property_use_1",
+    "_3rd_largest_property_use_1",
+    "year_built",
+    "number_of_buildings",
+    "occupancy",
+    "primary_property_type_self",
+    "borough"
+  ],
+  "numeric_features": [
+    "largest_property_use_type_1",
+    "_2nd_largest_property_use_1",
+    "_3rd_largest_property_use_1",
+    "year_built",
+    "number_of_buildings",
+    "occupancy"
+  ],
+  "categorical_features": [
+    "primary_property_type_self",
+    "borough"
+  ],
+  "imputation_values": {
+    "largest_property_use_type_1": 59757.0,
+    "_2nd_largest_property_use_1": 8666.5,
+    "_3rd_largest_property_use_1": 5760.0,
+    "year_built": 1950.0,
+    "number_of_buildings": 1.0,
+    "occupancy": 100.0
+  },
+  "interval_log_quantile": 0.7155142,
+  "nominal_coverage": 0.9,
+  "test_coverage": 0.8769146608315098,
+  "mean_interval_width_tCO2e": 842.6242188915379,
+  "partition_rows": {
+    "train": 7308,
+    "validation": 1828,
+    "calibration": 1219,
+    "test": 1828
+  },
+  "clean_rows": 12183,
+  "selected_model": {
+    "depth": 8,
+    "iterations": 800,
+    "validation_log_MAE": 0.34879761711159546
+  },
+  "metrics": [
+    {
+      "model": "Median",
+      "MAE_tCO2e": 447.283905872059,
+      "RMSE_tCO2e": 1438.8505057042526,
+      "R2": -0.0504774118765947,
+      "MAE_log1p": 0.7797386680644818
+    },
+    {
+      "model": "RandomForest",
+      "MAE_tCO2e": 202.80233445707157,
+      "RMSE_tCO2e": 828.1562091608663,
+      "R2": 0.6519994778986469,
+      "MAE_log1p": 0.3639355648862121
+    },
+    {
+      "model": "CatBoost",
+      "MAE_tCO2e": 194.3601224291347,
+      "RMSE_tCO2e": 797.5160089110789,
+      "R2": 0.6772738254952304,
+      "MAE_log1p": 0.3510507171262527
+    }
+  ],
+  "property_types": [
+    "College/University",
+    "Community Center and Social Meeting Hall",
+    "Courthouse",
+    "Data Center",
+    "Distribution Center",
+    "Enclosed Mall",
+    "Financial Office",
+    "Fire Station",
+    "Fitness Center/Health Club/Gym",
+    "Food Service",
+    "Hospital (General Medical & Surgical)",
+    "Hotel",
+    "K-12 School",
+    "Laboratory",
+    "Library",
+    "Manufacturing/Industrial Plant",
+    "Medical Office",
+    "Mixed Use Property",
+    "Movie Theater",
+    "Multifamily Housing",
+    "Museum",
+    "Non-Refrigerated Warehouse",
+    "Office",
+    "Other",
+    "Other - Education",
+    "Other - Entertainment/Public Assembly",
+    "Other - Lodging/Residential",
+    "Other - Public Services",
+    "Other - Recreation",
+    "Other - Services",
+    "Other - Specialty Hospital",
+    "Outpatient Rehabilitation/Physical Therapy",
+    "Parking",
+    "Performing Arts",
+    "Police Station",
+    "Pre-school/Daycare",
+    "Prison/Incarceration",
+    "Refrigerated Warehouse",
+    "Residence Hall/Dormitory",
+    "Residential Care Facility",
+    "Restaurant",
+    "Retail Store",
+    "Self-Storage Facility",
+    "Senior Living Community",
+    "Strip Mall",
+    "Supermarket/Grocery Store",
+    "Urgent Care/Clinic/Other Outpatient",
+    "Vehicle Dealership",
+    "Vehicle Repair Services",
+    "Wholesale Club/Supercenter",
+    "Worship Facility",
+    "Zoo"
+  ],
+  "boroughs": [
+    "BRONX",
+    "BROOKLYN",
+    "MANHATTAN",
+    "QUEENS",
+    "STATEN IS"
+  ],
+  "scope": "Property-disjoint, same-year peer emissions benchmark; NOT a verified causal baseline or carbon credits.",
+  "limitations": [
+    "Self-reported government-published records",
+    "Incomplete activity/weather controls",
+    "US building results do not validate Indian establishments",
+    "No future-year validation; latest available year is not claimed complete",
+    "Log-space intervals assume sufficiently comparable calibration/test properties"
+  ]
+}

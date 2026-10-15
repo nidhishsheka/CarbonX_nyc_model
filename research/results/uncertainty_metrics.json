@@ -1,0 +1,8 @@
+{
+  "nominal_daily_coverage": 0.9,
+  "observed_test_daily_coverage": 0.9454545454545454,
+  "mean_width_kWh": 3120.502748855504,
+  "calibration_days": 55,
+  "absolute_residual_radius_kWh": 1626.8170830275158,
+  "limitation": "Empirical temporal calibration; no exchangeability guarantee, causal identification, or period-total coverage guarantee."
+}

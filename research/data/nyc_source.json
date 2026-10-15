@@ -1,0 +1,23 @@
+{
+  "dataset_id": "5zyy-y8am",
+  "download_url": "https://data.cityofnewyork.us/resource/5zyy-y8am.csv?%24select=report_year%2Cproperty_id%2Cparent_property_id%2Cprimary_property_type_self%2Clargest_property_use_type_1%2C_2nd_largest_property_use_1%2C_3rd_largest_property_use_1%2Cyear_built%2Cnumber_of_buildings%2Coccupancy%2Cborough%2Ctotal_location_based_ghg%2Cestimated_values_energy%2Calert_energy_meter_has_less%2Calert_energy_meter_has_gaps%2Cmetered_areas_energy&%24limit=200000&%24order=report_year%2Cproperty_id",
+  "retrieved_utc": "2026-10-05",
+  "subset_columns": [
+    "report_year",
+    "property_id",
+    "parent_property_id",
+    "primary_property_type_self",
+    "largest_property_use_type_1",
+    "_2nd_largest_property_use_1",
+    "_3rd_largest_property_use_1",
+    "year_built",
+    "number_of_buildings",
+    "occupancy",
+    "borough",
+    "total_location_based_ghg",
+    "estimated_values_energy",
+    "alert_energy_meter_has_less",
+    "alert_energy_meter_has_gaps",
+    "metered_areas_energy"
+  ]
+}

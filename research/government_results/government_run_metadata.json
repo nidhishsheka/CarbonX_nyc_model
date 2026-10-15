@@ -1,0 +1,47 @@
+{
+  "source": "City of New York NYC Open Data dataset 5zyy-y8am",
+  "selected_report_year": 2024,
+  "downloaded_rows": 103259,
+  "year_rows_before_cleaning": 39090,
+  "clean_rows": 12183,
+  "partition_rows": {
+    "train": 7308,
+    "validation": 1828,
+    "calibration": 1219,
+    "test": 1828
+  },
+  "nominal_coverage": 0.9,
+  "test_coverage": 0.8769146608315098,
+  "mean_interval_width_tCO2e": 842.6242188915379,
+  "selected_model": {
+    "depth": 8,
+    "iterations": 800,
+    "validation_log_MAE": 0.34879761711159546
+  },
+  "features": [
+    "largest_property_use_type_1",
+    "_2nd_largest_property_use_1",
+    "_3rd_largest_property_use_1",
+    "year_built",
+    "number_of_buildings",
+    "occupancy",
+    "primary_property_type_self",
+    "borough"
+  ],
+  "imputation_values": {
+    "largest_property_use_type_1": 59757.0,
+    "_2nd_largest_property_use_1": 8666.5,
+    "_3rd_largest_property_use_1": 5760.0,
+    "year_built": 1950.0,
+    "number_of_buildings": 1.0,
+    "occupancy": 100.0
+  },
+  "scope": "Property-disjoint, same-year peer emissions benchmark; NOT a verified causal baseline or carbon credits.",
+  "limitations": [
+    "Self-reported government-published records",
+    "Incomplete activity/weather controls",
+    "US building results do not validate Indian establishments",
+    "No future-year validation; latest available year is not claimed complete",
+    "Log-space intervals assume sufficiently comparable calibration/test properties"
+  ]
+}

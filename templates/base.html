@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}CarbonX{% endblock %}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+<header>
+    <h1>CarbonX</h1>
+    <p1>Carbon Emission Benchmarking &amp; Simulated Carbon Credit Platform</p1>
+</header>
+
+<nav>
+    <a href="/">Home</a>
+    <a href="/emissions">Emissions</a>
+    <a href="/benchmark">Benchmark</a>
+    <a href="/report">Report</a>
+    <a href="/trade">Trading</a>
+    <a href="/market">Market</a>
+    <a href="/transactions">Transactions</a>
+</nav>
+
+<div class="container">
+{% block content %}
+{% endblock %}
+</div>
+
+
+</body>
+</html>
