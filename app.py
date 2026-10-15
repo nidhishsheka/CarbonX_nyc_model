@@ -1,9 +1,3 @@
-# CarbonX - carbon accounting, peer benchmarking and a simulated credit marketplace.
-#
-# Credits in this prototype are SIMULATED. They come from a policy limit
-# (baseline x sector reduction) minus recorded emissions, and are not certified or
-# verified units. The peer benchmark (benchmark.py) is shown beside them for context
-# and is never used to create credits.
 import json
 import math
 import os
@@ -63,7 +57,6 @@ def ensure_wallet_system(conn):
         INSERT OR IGNORE INTO Credit_Wallet (est_id, available_credit, reserved_credit, generated_credit)
         SELECT est_id, 0, 0, 0 FROM Establishment""")
 
-    # available wallet = generated credits + net purchased/sold credits
     conn.execute("""
         UPDATE Credit_Wallet
         SET generated_credit = COALESCE((
@@ -112,8 +105,6 @@ def initialize_database():
 
 initialize_database()
 
-
-# ----------------------------------------------------------------- helpers
 def to_float(value, name, *, positive=False, non_negative=False):
     """Parse a form number; reject NaN/inf, which float() happily accepts."""
     try:
@@ -197,7 +188,6 @@ def get_market_trend(conn):
             "total_volume": sum(r["credits_traded"] for r in rows)}
 
 
-# ------------------------------------------------------------------ pages
 @app.route("/")
 def dashboard():
     with closing(get_db()) as conn:
@@ -271,9 +261,6 @@ def add_activity():
             except ValueError as e:
                 return error(str(e))
 
-            # A trigger creates the Emission_Record. If the source has no active factor it
-            # silently creates nothing, so raise (which rolls the insert back) instead of
-            # keeping an activity that carries no emissions.
             try:
                 with write_transaction() as w:
                     activity_id = w.execute(
@@ -296,7 +283,6 @@ def add_activity():
 @app.route("/emissions")
 def emissions():
     with closing(get_db()) as conn:
-        # factor is the one recorded on the emission row, not "every factor of the source"
         rows = conn.execute("""
             SELECT e.est_name, s.source_name, s.unit, ad.quantity, ef.factor_value, ef.effective_year,
                    er.emission_kg
@@ -337,8 +323,6 @@ def report():
         })
     return render_template("report.html", rows=data)
 
-
-# ---------------------------------------------------------------- benchmark
 BENCH_FORM_FIELDS = list(benchmark.NUMERIC_FIELDS) + ["primary_property_type_self", "borough"]
 
 
@@ -458,7 +442,6 @@ def benchmark_model():
                            limitations=model["limitations"].split("\n"))
 
 
-# ------------------------------------------------------------------ trading
 def _trade_page_data(conn):
     establishments = conn.execute("SELECT est_id, est_name FROM Establishment ORDER BY est_name").fetchall()
     wallets = conn.execute("""
@@ -520,7 +503,6 @@ def _trade_page_data(conn):
 @app.route("/trade", methods=["GET", "POST"])
 def trade():
     if request.method == "POST":
-        # direct (unlisted) trade between two establishments
         try:
             seller = to_int(request.form.get("seller_est_id"), "Seller")
             buyer = to_int(request.form.get("buyer_est_id"), "Buyer")
@@ -538,7 +520,7 @@ def trade():
                 if wallet is None or not w.execute("SELECT 1 FROM Credit_Wallet WHERE est_id=?",
                                                    (buyer,)).fetchone():
                     raise ValueError("Seller or buyer wallet not found.")
-                # credits already offered in a listing are reserved and cannot be sold here
+               
                 if wallet["available_credit"] - wallet["reserved_credit"] < amount - EPS:
                     raise ValueError("Seller does not have enough unreserved credits.")
                 w.execute("""INSERT INTO Credit_Transaction
@@ -580,7 +562,7 @@ def buy_credit():
                 return error("Buyer not found", 404)
             if buyer == listing["seller_est_id"]:
                 return error("Seller cannot buy their own listing")
-            # The conditional UPDATE is the real check; its rowcount says whether we won.
+            
             cur = w.execute("""
                 UPDATE Credit_Listing
                 SET remaining_credit = ROUND(remaining_credit - ?, 6),
@@ -599,7 +581,7 @@ def buy_credit():
                 raise ValueError("Seller reservation is inconsistent; trade cancelled")
             w.execute("""UPDATE Credit_Wallet SET reserved_credit = MAX(reserved_credit, 0)
                          WHERE est_id = ?""", (listing["seller_est_id"],))
-            # the settle_credit_transaction trigger moves the credits between wallets
+            
             w.execute("""INSERT INTO Credit_Transaction
                          (seller_est_id, buyer_est_id, credit_amount, price_per_credit, total_amount)
                          VALUES (?,?,?,?,?)""",
