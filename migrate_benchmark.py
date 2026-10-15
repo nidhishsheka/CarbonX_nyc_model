@@ -1,15 +1,3 @@
-"""Add the peer-benchmark layer to cc.db (idempotent; writes a backup first).
-
-New tables:
-  Benchmark_Model         one row per trained model (metrics, interval, scope, limits)
-  Benchmark_Model_Metric  Median / Random Forest / CatBoost comparison on held-out test data
-  Credit_Simulation       the 0% / 10% / 20% synthetic-reduction experiment
-  Establishment_Profile   the eight model inputs for an establishment (optional)
-  Benchmark_Prediction    stored benchmark + interval (+ comparison with reported emissions)
-
-Nothing here touches Carbon_Credit, Credit_Wallet, Credit_Ledger or any credit trigger:
-a peer benchmark is not an emission limit and never mints credits.
-"""
 import csv
 import json
 import shutil

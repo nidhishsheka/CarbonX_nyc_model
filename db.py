@@ -18,11 +18,7 @@ def get_db():
 
 @contextmanager
 def write_transaction():
-    """One exclusive write transaction (BEGIN IMMEDIATE).
 
-    Taking the write lock before reading balances is what stops two concurrent
-    requests from both passing the same "enough credits?" check.
-    """
     conn = get_db()
     conn.isolation_level = None  # manual transaction control
     try:

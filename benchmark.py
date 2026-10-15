@@ -1,15 +1,3 @@
-"""Peer emissions benchmark: expected annual emissions with an uncertainty interval.
-
-Implements steps 5-8 of the student workflow (docs/student_workflow.jpg): a CatBoost
-model trained on NYC LL84 building data predicts log(1 + tCO2e); a split-conformal
-log-residual radius gives a nominal 90% prediction interval; reported emissions are
-then compared with that interval.
-
-IMPORTANT SCOPE: this is a *peer benchmark*, not an emission limit, not a causal
-no-intervention baseline and not a carbon credit. Nothing in this module reads or
-writes credit tables. The model was trained on New York City buildings and has not
-been validated for Indian establishments.
-"""
 import json
 import math
 from datetime import date
@@ -79,12 +67,7 @@ def _num(value, name):
 
 
 def clean_inputs(raw):
-    """Validate form input. Returns (model_inputs, imputed_field_names).
-
-    Missing numeric inputs are filled with the training-set medians, exactly as the
-    research pipeline does. The floor area of the largest use and the property type
-    are required because the model cannot say anything useful without them.
-    """
+   
     cfg = load_config()
     out, imputed = {}, []
     for name, (label, lo, hi) in NUMERIC_FIELDS.items():
