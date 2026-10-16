@@ -7,13 +7,14 @@ marketplace.
 
 ```bash
 pip install -r requirements.txt
+python3 -m pip install catboost #if not installed
 python app.py            # http://127.0.0.1:5000   (FLASK_DEBUG=1 for debug mode)
 python -m unittest discover -s tests -v
+
 ```
 
 The shipped `cc.db` already contains the CEA data and the benchmark tables. To rebuild from an older
 database: `python migrate_carbonx.py && python import_cea.py && python migrate_benchmark.py`
-(each writes a timestamped backup first; set `CARBONX_DB` or pass a path to use another file).
 
 ## Layout
 

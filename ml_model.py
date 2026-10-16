@@ -1,17 +1,3 @@
-"""Next-day credit price forecast for the trading screen.
-
-This is the *market* model. It is unrelated to the emissions benchmark in benchmark.py.
-
-Fixes versus the original:
-  * Training and inference now use the same features. The old code trained on the
-    previous day's price (lag 1) against the price two steps ahead, but predicted
-    from today's price, so the model was applied to inputs it was never trained on.
-  * The forecast now starts from the genuinely latest day. The old code dropped the
-    last row (its target is unknown) and then treated the day before as "latest".
-  * Too little history is reported instead of fitting 7 features to a handful of rows.
-  * The naive "tomorrow = today" error is reported next to the model error, so the
-    forecast is judged against the obvious alternative.
-"""
 import pandas as pd
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error
