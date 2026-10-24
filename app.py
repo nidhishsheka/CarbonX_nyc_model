@@ -4,8 +4,12 @@ import os
 import sqlite3
 from contextlib import closing
 
-from flask import Flask, abort, redirect, render_template, request
-
+from flask import Flask, abort, jsonify, redirect, render_template, request
+from chatbot import (
+    answer_question,
+    ChatbotConfigurationError,
+    ChatbotProviderError,
+)
 import benchmark
 from db import get_db, write_transaction
 from ml_model import get_price_prediction
@@ -632,6 +636,50 @@ def transactions():
             JOIN Establishment b ON ct.buyer_est_id = b.est_id
             ORDER BY ct.created_at DESC""").fetchall()
     return render_template("transactions.html", transactions=rows)
+
+
+@app.route("/chatbot", methods=["GET"])
+def chatbot_page():
+    return render_template("chatbot.html")
+
+
+@app.route("/api/chat", methods=["POST"])
+def chatbot_api():
+    if not request.is_json:
+        return jsonify({"error": "Request must contain JSON."}), 400
+
+    data = request.get_json(silent=True)
+
+    if not isinstance(data, dict):
+        return jsonify({"error": "Invalid JSON request."}), 400
+
+    question = data.get("question")
+
+    if not isinstance(question, str) or not question.strip():
+        return jsonify({"error": "Please enter a question."}), 400
+
+    question = question.strip()
+
+    if len(question) > 1000:
+        return jsonify({
+            "error": "Your question must be 1000 characters or fewer."
+        }), 400
+
+    try:
+        answer = answer_question(question)
+        return jsonify({"answer": answer}), 200
+
+    except ChatbotConfigurationError:
+        app.logger.exception("CarbonX chatbot configuration error")
+        return jsonify({
+            "error": "The AI assistant is not configured correctly."
+        }), 503
+
+    except ChatbotProviderError:
+        app.logger.exception("CarbonX chatbot provider error")
+        return jsonify({
+            "error": "The AI service is temporarily unavailable. Please try again."
+        }), 502
 
 
 if __name__ == "__main__":
