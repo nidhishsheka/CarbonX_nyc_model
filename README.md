@@ -18,16 +18,32 @@ database: `python migrate_carbonx.py && python import_cea.py && python migrate_b
 
 ## Layout
 
-```
+```text
 app.py                 Flask routes (trading fixes, benchmark pages)
 db.py                  connection + exclusive write transactions
 benchmark.py           peer benchmark: validation, CatBoost prediction, interval, comparison
+chatbot.py             AI assistant: knowledge-base retrieval + Gemini responses
+docs/carbonx_knowledge_base.md
+                       curated knowledge base used to ground chatbot answers
 migrate_benchmark.py   adds Benchmark_* / Credit_Simulation / Establishment_Profile tables
 ml_model.py            next-day credit price forecast (market model, unrelated to emissions)
 models/                government_catboost.cbm + government_benchmark.json (interval, imputation, categories)
 research/              original analysis package (notebook, train_*.py, results, NYC and steel data)
 tests/                 25 tests, incl. exact reproduction of the research predictions
 ```
+
+## AI Assistant
+
+CarbonX includes an AI assistant that answers questions about the project using a
+curated CarbonX knowledge base.
+
+* `chatbot.py` handles knowledge-base retrieval and Gemini API responses.
+* `docs/carbonx_knowledge_base.md` contains the information used to ground chatbot answers.
+* The chatbot uses `gemini-3.6-flash` through the Google Gemini API.
+* The Gemini API key is stored locally in `.env` and is not committed to the repository.
+* The assistant is designed to answer only from the supplied CarbonX knowledge base and
+  avoids inventing unsupported project information.
+* Temporary Gemini service errors such as 503/504 responses are retried automatically.
 
 ## Scope and limits (read before relying on any number)
 
