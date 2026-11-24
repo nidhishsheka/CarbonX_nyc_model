@@ -255,7 +255,7 @@ USER QUESTION:
     client = genai.Client(
         api_key=GEMINI_API_KEY,
         http_options=types.HttpOptions(
-            timeout=15000
+            timeout=60000
         ),
     )
 
@@ -327,6 +327,16 @@ USER QUESTION:
             # -------------------------------------------------
             # 13. Identify temporary errors
             # -------------------------------------------------
+            is_quota_error = (
+                "429" in error_text
+                or "RESOURCE_EXHAUSTED" in error_text
+                or "quota" in error_text.lower()
+                )
+            if is_quota_error:
+                raise ChatbotProviderError(
+                    "The Gemini API usage limit has been reached. "
+                    "Please try again after the quota resets."
+                    ) from None
             is_transient = (
                 "503" in error_text
                 or "504" in error_text
